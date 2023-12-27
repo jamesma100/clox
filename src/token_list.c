@@ -28,18 +28,3 @@ void free_list(TokenList *tl) {
   tl->list = NULL;
   tl->used = tl->size = 0;
 }
-
-// int main() {
-//   TokenList tl;
-//   init(&tl, 5);
-//   for (int i = 0; i < 21; ++i) {
-//     Token t = {PRINT, "hello", "world", i};
-//     insert(&tl, &t); 
-//   }
-// 
-//   printf("%d\n", tl.list[9].line);
-//   printf("%d\n", tl.list[12].line);
-//   printf("%zu\n", tl.size);
-//   free_list(&tl);
-//   return 0;
-// }

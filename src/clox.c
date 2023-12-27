@@ -4,6 +4,8 @@
 #include <stdbool.h> 
 #include "token.h"
 #include "token_list.h"
+#include "clox.h"
+#include "scanner.h"
 
 static bool had_error = false;
 
@@ -17,7 +19,14 @@ void error(int line, char* msg) {
 }
 
 void run(char* line) {
-    printf("Read line: %s", line);
+  TokenList tl;
+  init(&tl, 4);
+  Scanner s = {&tl, line, 0, 0, 0};
+
+  TokenList* tokens = scan_tokens(&s);
+  for (int i = 0; i < (int)tokens->used; ++i) {
+    printf("%s\n", tok_to_str(tokens->list + i));
+  }
 }
 
 void get_input(char* filename) {
@@ -46,11 +55,6 @@ void get_input(char* filename) {
 }
 
 int main(int argc, char* argv[]) {
-  Token t = {FALSE, "hello", "world", 1};
-  char *res = tok_to_str(&t);
-  printf("string result: %s\n", res);
-  if (res) free(res);
-  
   if (argc > 2) {
     exit(64);
   } else if (argc == 2) {

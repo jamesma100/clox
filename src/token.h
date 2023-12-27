@@ -47,16 +47,8 @@ typedef enum {
 typedef struct {
   TokenType type;
   char *lexeme;
-  char *literal;
+  void *literal;
   int line;
 } Token;
 
 char *tok_to_str(Token *tkn);
-
-char *tok_to_str(Token *tkn) {
-  size_t len = 0;
-  len = snprintf(NULL, len, "%d %s %s", tkn->type, tkn->lexeme, tkn->literal);
-  char *fmt_str = (char*)malloc(len * sizeof(char) + 1);
-  snprintf(fmt_str, len + 1, "%d %s %s", tkn->type, tkn->lexeme, tkn->literal);
-  return fmt_str;
-}
