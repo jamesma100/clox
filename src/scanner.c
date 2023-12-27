@@ -26,10 +26,19 @@ char advance(Scanner *s) {
   return *(s->source + s->current++);
 }
 
+/*
+ * Return substring of str from start to end (exclusive)
+ * Does dynamic allocation so remember to free when done!
+ */
+char* substr(char *str, int start, int end) {
+  size_t sz = (size_t)(end - start);
+  char *substr = malloc(sz);
+  strncpy(substr, str + start, sz);
+  return substr;
+}
+
 void add_token_with_literal(Scanner *s, TokenType type, void *literal) {
-  size_t text_sz = (size_t)(s->current - s->start);
-  char *text = malloc(text_sz);
-  strncpy(text, s->source + s->start, text_sz);
+  char *text = substr(s->source, s->start, s->current);
   Token tkn = {type, text, literal, s->line};
   insert(s->tokens, &tkn);
 }
@@ -59,9 +68,7 @@ void do_string(Scanner *s) {
   advance(s);
 
   // trim the surrounding quotes
-  size_t value_sz = (size_t)(s->current - s->start - 2);
-  char *value = malloc(value_sz);
-  strncpy(value, s->source + s->start + 1, value_sz);
+  char *value = substr(s->source, s->start + 1, s->current - 1);
   add_token_with_literal(s, STRING, value);
 }
 
@@ -75,21 +82,18 @@ void do_number(Scanner *s) {
     while (isdigit(peek(s))) advance(s);
   }
 
-  size_t double_str_sz = (size_t)(s->current - s->start);
-  char *double_str = malloc(double_str_sz);
-  strncpy(double_str, s->source + s->start, double_str_sz);
-  double d = atof(s->source);
+  char *double_str = substr(s->source, s->start, s->current);
+  double d = atof(double_str);
   free(double_str);
   double_str = NULL;
   add_token_with_literal(s, NUMBER, &d);
 }
 
+
 void do_identifier(Scanner *s) {
   while (isalnum(peek(s))) advance(s);
 
-  size_t newtext_sz = (size_t)(s->current - s->start);
-  char *newtext = malloc(newtext_sz);
-  strncpy(newtext, s->source + s->start, newtext_sz);
+  char *newtext = substr(s->source, s->start, s->current);
   TokenType type;
 
   if (strcmp(newtext, "and") == 0){
