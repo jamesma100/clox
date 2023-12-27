@@ -47,8 +47,11 @@ typedef enum {
 typedef struct {
   TokenType type;
   char *lexeme;
-  void *literal;
+  char *string_literal;
+  double *double_literal;
   int line;
 } Token;
 
 char *tok_to_str(Token *tkn);
+bool tok_is_string(Token *tkn);
+bool tok_is_double(Token *tkn);

@@ -37,14 +37,14 @@ char* substr(char *str, int start, int end) {
   return substr;
 }
 
-void add_token_with_literal(Scanner *s, TokenType type, void *literal) {
+void add_token_with_literal(Scanner *s, TokenType type, char *string_literal, double* double_literal) {
   char *text = substr(s->source, s->start, s->current);
-  Token tkn = {type, text, literal, s->line};
+  Token tkn = {type, text, string_literal, double_literal, s->line};
   insert(s->tokens, &tkn);
 }
 
 void add_token(Scanner *s, TokenType type) {
-  add_token_with_literal(s, type, NULL);
+  add_token_with_literal(s, type, NULL, NULL);
 }
 
 bool match(Scanner *s, char expected) {
@@ -69,7 +69,7 @@ void do_string(Scanner *s) {
 
   // trim the surrounding quotes
   char *value = substr(s->source, s->start + 1, s->current - 1);
-  add_token_with_literal(s, STRING, value);
+  add_token_with_literal(s, STRING, value, NULL);
 }
 
 void do_number(Scanner *s) {
@@ -86,7 +86,7 @@ void do_number(Scanner *s) {
   double d = atof(double_str);
   free(double_str);
   double_str = NULL;
-  add_token_with_literal(s, NUMBER, &d);
+  add_token_with_literal(s, NUMBER, NULL, &d);
 }
 
 
@@ -214,7 +214,7 @@ TokenList* scan_tokens(Scanner *s) {
     s->start = s->current;
     scan_token(s);
   }
-  Token end_token = {END, "", NULL, s->line};
+  Token end_token = {END, "", NULL, NULL, s->line};
   insert(s->tokens, &end_token);
   return s->tokens;
 }
